@@ -4,11 +4,19 @@
 #include <QGLWidget>
 #include<Glaux.h>
 #include <QKeyEvent>
+#include <QtGui>
+#include <math.h>
+#include <gl/gl.h>
+#include <QMouseEvent>
+#include <QTimer>
+#include <QDebug>
+#include <QEvent>
 
 Widget::Widget(QWidget *parent)
     : QGLWidget(parent)
     , ui(new Ui::Widget)
 {
+    xAxisRotation=0; yAxisRotation=0;
     ui->setupUi(this);
 }
 
@@ -24,6 +32,11 @@ void Widget::paintGL()
      glEnable(GL_DEPTH_TEST);
 
      glBegin(GL_QUADS);
+     glLoadIdentity();
+
+     glRotatef(yAxisRotation, 0.0, 1.0, 0.0);
+     glRotatef(xAxisRotation, 1.0, 0.0, 0.0);
+
 
      glColor3d(1.0,0.0,0.0);
 
@@ -87,10 +100,36 @@ void Widget::resizeGL(int nWidth,int nHeight)
     glViewport(0,0,(GLint)nWidth,(GLint)nHeight);
      glMatrixMode(GL_PROJECTION);
      glLoadIdentity();
-     glOrtho(-1.0,1.0,-1.0,1.0,-10.0,10.0);
+
+     glOrtho(-1,1.0,-1.0,1.0,-10.0,10.0);
+
+
+     glViewport(0, 0, (GLint)nWidth, (GLint)nHeight);
+
+
      glMatrixMode(GL_MODELVIEW);
      glLoadIdentity();
+     currentWidth = nWidth;
+     currentHeight = nHeight;
+
+
+
 }
+void Widget::mousePressEvent(QMouseEvent *event)
+{
+    pressPosition = event->pos();
+}
+
+void Widget::mouseMoveEvent(QMouseEvent *event)
+{
+    xAxisRotation += (180 * ((GLfloat)event->y() - (GLfloat)pressPosition.y())) / (currentHeight);
+    yAxisRotation += (180 * ((GLfloat)event->x() - (GLfloat)pressPosition.x())) / (currentWidth);
+
+    pressPosition = event->pos();
+
+    updateGL();
+}
+
 void Widget::keyPressEvent(QKeyEvent* event)
 {
     switch(event->key())
