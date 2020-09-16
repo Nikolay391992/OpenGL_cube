@@ -31,11 +31,13 @@ void Widget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
      glEnable(GL_DEPTH_TEST);
 
+     glRotatef(yAxisRotation, 0.0, 1.0, 0.0);
+     glRotatef(xAxisRotation, 1.0, 0.0, 0.0);
+
      glBegin(GL_QUADS);
      glLoadIdentity();
 
-     glRotatef(yAxisRotation, 0.0, 1.0, 0.0);
-     glRotatef(xAxisRotation, 1.0, 0.0, 0.0);
+
 
 
      glColor3d(1.0,0.0,0.0);
@@ -122,8 +124,8 @@ void Widget::mousePressEvent(QMouseEvent *event)
 
 void Widget::mouseMoveEvent(QMouseEvent *event)
 {
-    xAxisRotation += (180 * ((GLfloat)event->y() - (GLfloat)pressPosition.y())) / (currentHeight);
-    yAxisRotation += (180 * ((GLfloat)event->x() - (GLfloat)pressPosition.x())) / (currentWidth);
+    xAxisRotation += (10 * ((GLfloat)event->y() - (GLfloat)pressPosition.y())) / (currentHeight);
+    yAxisRotation += (10 * ((GLfloat)event->x() - (GLfloat)pressPosition.x())) / (currentWidth);
 
     pressPosition = event->pos();
 
@@ -181,4 +183,3 @@ void Widget::keyPressEvent(QKeyEvent* event)
       updateGL();
 
 }
-
